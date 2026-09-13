@@ -1,3 +1,7 @@
+> **Fingertip-maintained fork.** This repository is owned by Fingertip (sead-fingertip) and is installed by `fingertip-mobile-app` pinned to a full commit hash. Forked from [sead-penglenghok/react-native-photo-editor](https://github.com/sead-penglenghok/react-native-photo-editor), originally [prscX/react-native-photo-editor](https://github.com/prscX/react-native-photo-editor) (Apache-2.0).
+>
+> **How to change it:** open a pull request here (merge commits only, one approval required), then bump the commit hash of `react-native-photo-editor` in `fingertip-mobile-app/package.json`, run `npm install --legacy-peer-deps`, rebuild iOS and Android, and run the app's unit tests. Never squash, rebase or force-push `master`: the app pins commits, and rewritten history breaks every install.
+
 <h1 align="center">
 
 <p align="center">
