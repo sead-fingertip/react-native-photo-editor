@@ -101,14 +101,31 @@ RCT_EXPORT_METHOD(Edit:(nonnull NSDictionary *)props onDone:(RCTResponseSenderBl
         }
 
         id<UIApplicationDelegate> app = [[UIApplication sharedApplication] delegate];
-        UINavigationController *rootViewController = ((UINavigationController*) app.window.rootViewController);
+        UIViewController *presenter = app.window.rootViewController;
 
-        if (rootViewController.presentedViewController) {
-            [rootViewController.presentedViewController presentViewController:photoEditor animated:YES completion:nil];
-            return;
+        // Walk to the top-most presented view controller.
+        while (presenter.presentedViewController) {
+            presenter = presenter.presentedViewController;
         }
 
-        [rootViewController presentViewController:photoEditor animated:YES completion:nil];
+        // The top-most controller may still be animating out. expo-image-picker >= 16
+        // resolves the camera promise before UIImagePickerController finishes dismissing,
+        // so JS calls Edit while the picker is mid-dismiss. Presenting on a controller that
+        // is being dismissed is silently refused by UIKit and onDone/onCancel never fire.
+        // Wait for that transition to finish, then present from the controller underneath.
+        if (presenter.isBeingDismissed) {
+            UIViewController *underneath = presenter.presentingViewController;
+            id<UIViewControllerTransitionCoordinator> coordinator = presenter.transitionCoordinator;
+            if (coordinator) {
+                [coordinator animateAlongsideTransition:nil completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+                    [underneath presentViewController:photoEditor animated:YES completion:nil];
+                }];
+                return;
+            }
+            presenter = underneath;
+        }
+
+        [presenter presentViewController:photoEditor animated:YES completion:nil];
     });
 }
 
