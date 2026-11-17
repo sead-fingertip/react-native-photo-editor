@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="ui.photoeditor">
     <application>
-        <activity android:name="com.ahmedadeltito.photoeditor.EdgeToEdgeUCropActivity" />
+        <activity
+            android:name="com.ahmedadeltito.photoeditor.EdgeToEdgeUCropActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 </manifest>

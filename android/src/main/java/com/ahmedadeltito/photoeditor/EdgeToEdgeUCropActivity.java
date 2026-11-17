@@ -13,6 +13,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.yalantis.ucrop.UCropActivity;
+import com.yalantis.ucrop.view.GestureCropImageView;
+import com.yalantis.ucrop.view.UCropView;
 
 /**
  * UCropActivity that keeps its toolbar and controls clear of the system bars.
@@ -69,6 +71,25 @@ public class EdgeToEdgeUCropActivity extends UCropActivity {
             toolbar.getViewTreeObserver().addOnGlobalLayoutListener(
                     () -> centerToolbarChildrenVertically(toolbarGroup));
         }
+    }
+
+    @Override
+    protected void cropAndSaveImage() {
+        // UCrop 2.2.2 skips cropping (and just copies the original file) when the crop
+        // rect still covers the whole image, ignoring any rotation. That is always the
+        // case for a rotated 1:1 photo, so the rotation was lost. Setting a max result
+        // size forces the real crop, and one this large never scales the image down.
+        // Only do it for rotated photos: the real crop works on the downsampled preview
+        // bitmap, so an unchanged photo is better off copied at full resolution.
+        UCropView uCropView = findViewById(com.yalantis.ucrop.R.id.ucrop);
+        if (uCropView != null) {
+            GestureCropImageView cropImageView = uCropView.getCropImageView();
+            if (Math.abs(cropImageView.getCurrentAngle()) > 0.01f) {
+                cropImageView.setMaxResultImageSizeX(Integer.MAX_VALUE);
+                cropImageView.setMaxResultImageSizeY(Integer.MAX_VALUE);
+            }
+        }
+        super.cropAndSaveImage();
     }
 
     private static void centerToolbarChildrenVertically(ViewGroup toolbar) {

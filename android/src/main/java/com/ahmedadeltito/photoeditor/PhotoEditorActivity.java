@@ -767,13 +767,7 @@ public class PhotoEditorActivity extends AppCompatActivity implements View.OnCli
 
         UCrop uCrop = UCrop
                 .of(uri, Uri.fromFile(new File(this.getTmpDir(this), UUID.randomUUID().toString() + ".jpg")))
-                .withOptions(options)
-                // UCrop 2.2.2 skips cropping (and just copies the original file) when the
-                // crop rect still covers the whole image, ignoring any rotation. That is
-                // always the case for a rotated 1:1 photo, so the rotation was lost.
-                // Setting a max result size forces the real crop, and one this large
-                // never scales the image down.
-                .withMaxResultSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
+                .withOptions(options);
 
         // Open the edge-to-edge-safe subclass instead of UCropActivity.
         Intent cropIntent = uCrop.getIntent(this);
