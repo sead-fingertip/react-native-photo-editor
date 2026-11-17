@@ -1,6 +1,25 @@
 
 #import "RNPhotoEditor.h"
 
+// iOSPhotoEditor presents its crop screen without a presentation style, so on
+// iOS 13+ it opens as a page sheet that slides over the editor's own top bar and
+// its cancel / done buttons overlap the editor's controls. Present it full screen,
+// like the editor itself.
+@implementation PhotoEditorViewController (FullScreenCrop)
+
+- (void)presentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion
+{
+    if (@available(iOS 13, *)) {
+        if ([viewControllerToPresent isKindOfClass:[UINavigationController class]] &&
+            [((UINavigationController *)viewControllerToPresent).viewControllers.firstObject isKindOfClass:[CropViewController class]]) {
+            viewControllerToPresent.modalPresentationStyle = UIModalPresentationFullScreen;
+        }
+    }
+    [super presentViewController:viewControllerToPresent animated:flag completion:completion];
+}
+
+@end
+
 @implementation RNPhotoEditor
 
 - (dispatch_queue_t)methodQueue
