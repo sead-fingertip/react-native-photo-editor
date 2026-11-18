@@ -769,7 +769,10 @@ public class PhotoEditorActivity extends AppCompatActivity implements View.OnCli
                 .of(uri, Uri.fromFile(new File(this.getTmpDir(this), UUID.randomUUID().toString() + ".jpg")))
                 .withOptions(options);
 
-        uCrop.start(this);
+        // Open the edge-to-edge-safe subclass instead of UCropActivity.
+        Intent cropIntent = uCrop.getIntent(this);
+        cropIntent.setClass(this, EdgeToEdgeUCropActivity.class);
+        startActivityForResult(cropIntent, UCrop.REQUEST_CROP);
     }
 
 
